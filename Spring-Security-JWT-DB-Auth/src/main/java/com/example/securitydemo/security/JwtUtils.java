@@ -33,14 +33,22 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateTokenFromUsername(UserDetails userDetails) {
-        String username = userDetails.getUsername();
+    // Modify this method to accept either UserDetails or username
+    public String generateTokenFromUsername(String username) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key())
                 .compact();
+    }
+
+    // Keep this version for UserDetails if needed elsewhere
+    public String generateTokenFromUsername(UserDetails userDetails) {
+        if (userDetails == null || userDetails.getUsername() == null) {
+            throw new IllegalArgumentException("UserDetails and username cannot be null");
+        }
+        return generateTokenFromUsername(userDetails.getUsername());
     }
 
     public String getUserNameFromJwtToken(String token) {

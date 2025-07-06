@@ -1,12 +1,9 @@
 package com.example.securitydemo.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 
 @Entity
@@ -15,12 +12,22 @@ public class UserEntity {
     @Id
     private String username;
 
-    private String password;
+    private String password; //nullable
 
     private boolean enabled = true;
 
+    @Column(name = "oauth_provider")
+    private String oauthProvider; // "google", "github", or null for local users
+
+
+
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles;
+    private List<String> roles = new ArrayList<>(); // Initialize empty list
+
+    // Add helper methods
+    public boolean isOAuthUser() {
+        return this.oauthProvider != null;
+    }
 
     public String getUsername() {
         return username;
@@ -52,5 +59,13 @@ public class UserEntity {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public String getOauthProvider() {
+        return oauthProvider;
+    }
+
+    public void setOauthProvider(String oauthProvider) {
+        this.oauthProvider = oauthProvider;
     }
 }
